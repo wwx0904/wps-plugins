@@ -110,16 +110,22 @@ jobs:
     - name: Install dependencies
       run: npm install
       
-    - name: Remove icons directory completely
+    - name: Install ImageMagick
+      run: choco install imagemagick
+      
+    - name: Create proper icon files
       run: |
-        # Remove the entire icons directory to prevent any icon-related errors
-        Remove-Item -Path "src-tauri\icons" -Recurse -Force -ErrorAction SilentlyContinue
+        # Create a proper 32x32 ICO file using ImageMagick
+        magick -size 32x32 xc:"#667eea" src-tauri/icons/icon.png
+        magick src-tauri/icons/icon.png src-tauri/icons/icon.ico
         
-    - name: Build without icons
-      run: |
-        # Build with TAURI_SKIP_ICON_CREATION to skip icon processing
-        $env:TAURI_SKIP_ICON_CREATION = "1"
-        npm run tauri:build
+        # Copy to other required sizes
+        copy src-tauri/icons/icon.png src-tauri/icons\32x32.png
+        magick -size 128x128 xc:"#667eea" src-tauri/icons/128x128.png
+        copy src-tauri/icons/icon.png src-tauri/icons\icon.icns
+        
+    - name: Build the app
+      run: npm run tauri:build
       
     - name: Upload artifacts
       uses: actions/upload-artifact@v4

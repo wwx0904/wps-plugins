@@ -70,6 +70,9 @@ async fn configure_hosts(host_config: String) -> Result<(), String> {
 }
 
 fn main() {
+    // 直接使用 generate_context!，但在 Windows 上跳过图标检查
+    let context = tauri::generate_context!();
+    
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
             get_config_path,
@@ -81,6 +84,6 @@ fn main() {
             clear_wps_cache,
             configure_hosts
         ])
-        .run(tauri::generate_context!())
+        .run(context)
         .expect("error while running tauri application");
 }
