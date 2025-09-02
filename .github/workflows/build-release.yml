@@ -1,0 +1,110 @@
+name: Build and Release Tauri App
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build-macos:
+    name: Build macOS App
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: x86_64-apple-darwin, aarch64-apple-darwin
+        
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './src-tauri -> target'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build the app
+      run: npm run tauri:build
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-app
+        path: |
+          src-tauri/target/release/bundle/macos/*.app
+          src-tauri/target/release/bundle/dmg/*.dmg
+        retention-days: 30
+
+  build-windows:
+    name: Build Windows App
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: x86_64-pc-windows-msvc
+        
+    - name: Rust cache
+      uses: swatinem/rust-cache@v2
+      with:
+        workspaces: './src-tauri -> target'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Build the app
+      run: npm run tauri:build
+      
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-app
+        path: src-tauri/target/release/bundle/msi/*.msi
+        retention-days: 30
+
+  create-release:
+    name: Create Release
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v4
+      
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          macos-app/**/*.app
+          macos-app/**/*.dmg
+          windows-app/**/*.msi
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
