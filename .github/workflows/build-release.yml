@@ -110,18 +110,26 @@ jobs:
     - name: Install dependencies
       run: npm install
       
-    - name: Create valid icon files
-      shell: cmd
+    - name: Remove problematic icon files
       run: |
-        mkdir src-tauri\icons 2>nul
-        echo Creating valid icon files...
-        certutil -decodeglovy src-tauri\icons\icon.ico src-tauri\icons\icon.ico.b64 >nul 2>&1 || (
-          echo Creating minimal valid ICO file...
-          echo ^<?xml version="1.0" encoding="UTF-8"?^> > src-tauri\icons\icon.svg
-          echo ^<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"^> >> src-tauri\icons\icon.svg
-          echo ^<rect width="32" height="32" fill="#667eea"/^> >> src-tauri\icons\icon.svg
-          echo ^</svg^> >> src-tauri\icons\icon.svg
+        # Simply remove the icons directory to avoid icon parsing issues
+        Remove-Item -Path "src-tauri\icons" -Recurse -Force -ErrorAction SilentlyContinue
+        New-Item -ItemType Directory -Path "src-tauri\icons" -Force | Out-Null
+        
+    - name: Create empty but valid icon file
+      run: |
+        # Create a minimal 1x1 pixel ICO file
+        $bytes = [byte[]]@(
+            0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x01, 
+            0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x30, 0x00, 
+            0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 
+            0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 
+            0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00, 
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+            0x00, 0x00
         )
+        [System.IO.File]::WriteAllBytes("src-tauri\icons\icon.ico", $bytes)
         
     - name: Temporarily disable Windows icon
       run: |

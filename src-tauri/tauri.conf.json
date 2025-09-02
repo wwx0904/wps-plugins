@@ -45,7 +45,7 @@
         "depends": []
       },
       "externalBin": [],
-      "icon": ["icons/icon.png"],
+      "icon": [],
       "identifier": "com.qianlima.ai-bidding-wps-installer",
       "longDescription": "AI赢标助手WPS插件环境切换工具，用于快速切换不同的WPS插件配置环境",
       "macOS": {
