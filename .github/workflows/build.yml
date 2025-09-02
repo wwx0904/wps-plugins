@@ -1,0 +1,66 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest, macos-latest, ubuntu-latest]
+    
+    runs-on: ${{ matrix.platform }}
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install Rust (Windows)
+      if: matrix.platform == 'windows-latest'
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: x86_64-pc-windows-msvc
+        
+    - name: Install Rust (macOS)
+      if: matrix.platform == 'macos-latest'
+      uses: dtolnay/rust-toolchain@stable
+      
+    - name: Install Rust (Linux)
+      if: matrix.platform == 'ubuntu-latest'
+      uses: dtolnay/rust-toolchain@stable
+      
+    - name: Install dependencies (Windows)
+      if: matrix.platform == 'windows-latest'
+      run: |
+        npm install
+        choco install nsis
+        
+    - name: Install dependencies (macOS/Linux)
+      if: matrix.platform != 'windows-latest'
+      run: npm install
+      
+    - name: Build Tauri app
+      uses: tauri-apps/tauri-action@v0
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tagName: v__VERSION__
+        releaseName: 'AI赢标助手 v__VERSION__'
+        releaseBody: 'AI赢标助手-WPS环境切换工具的多平台版本发布'
+        releaseDraft: false
+        prerelease: false
+        
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.platform }}-bundle
+        path: |
+          src-tauri/target/release/bundle/*

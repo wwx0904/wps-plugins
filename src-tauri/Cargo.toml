@@ -1,0 +1,32 @@
+[package]
+name = "ai-bidding-wps-installer"
+version = "1.0.0"
+description = "AI赢标助手WPS插件环境切换工具"
+authors = ["QianLiMa Team"]
+license = "MIT"
+repository = ""
+default-run = "ai-bidding-wps-installer"
+edition = "2021"
+rust-version = "1.60"
+
+[build-dependencies]
+tauri-build = { version = "1.5.0", features = [] }
+
+[dependencies]
+tauri = { version = "1.5.4", features = [ "fs-read-file", "fs-write-file", "fs-remove-file", "shell-open", "fs-exists", "fs-create-dir", "path-all", "fs-read-dir", "os-all"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["full"] }
+anyhow = "1.0"
+thiserror = "1.0"
+
+# 用于XML处理（替代Go版本的XML功能）
+quick-xml = { version = "0.31", features = ["serialize"] }
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+
+[[bin]]
+name = "ai-bidding-wps-installer"
+path = "src/main.rs"

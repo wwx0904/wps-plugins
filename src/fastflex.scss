@@ -1,0 +1,184 @@
+.f_1 {
+    flex: 1;
+    min-width: 1px;
+    min-height: 1px;
+}
+.fs_0 {
+    flex-shrink: 0;
+}
+.fc {
+    display: flex;
+    flex-direction: column;
+    &_c {
+        @extend .fc;
+        align-items: center;
+    }
+    &_fs {
+        @extend .fc;
+        align-items: flex-start;
+    }
+    &_fe {
+        @extend .fc;
+        align-items: flex-end;
+    }
+    &_s {
+        @extend .fc;
+        align-items: stretch;
+    }
+    &_b {
+        @extend .fc;
+        align-items: baseline;
+    }
+}
+.fcr {
+    display: flex;
+    flex-direction: column-reverse;
+    &_c {
+        @extend .fcr;
+        align-items: center;
+    }
+    &_fs {
+        @extend .fcr;
+        align-items: flex-start;
+    }
+    &_fe {
+        @extend .fcr;
+        align-items: flex-end;
+    }
+    &_s {
+        @extend .fcr;
+        align-items: stretch;
+    }
+    &_b {
+        @extend .fcr;
+        align-items: baseline;
+    }
+}
+.fr {
+    display: flex;
+    flex-direction: row;
+    &_c {
+        @extend .fr;
+        align-items: center;
+    }
+    &_fs {
+        @extend .fr;
+        align-items: flex-start;
+    }
+    &_fe {
+        @extend .fr;
+        align-items: flex-end;
+    }
+    &_s {
+        @extend .fr;
+        align-items: stretch;
+    }
+    &_b {
+        @extend .fr;
+        align-items: baseline;
+    }
+}
+.frr {
+    display: flex;
+    flex-direction: row-reverse;
+    &_c {
+        @extend .frr;
+        align-items: center;
+    }
+    &_fs {
+        @extend .frr;
+        align-items: flex-start;
+    }
+    &_fe {
+        @extend .frr;
+        align-items: flex-end;
+    }
+    &_s {
+        @extend .frr;
+        align-items: stretch;
+    }
+    &_b {
+        @extend .frr;
+        align-items: baseline;
+    }
+}
+.fa {
+    &_s {
+        align-content: stretch;
+    }
+    &_c {
+        align-content: center;
+    }
+    &_fs {
+        align-content: flex-start;
+    }
+    &_fe {
+        align-content: flex-end;
+    }
+    &_sb {
+        align-content: space-between;
+    }
+    &_sa {
+        align-content: space-around;
+    }
+}
+.fs {
+    &_fs {
+        align-self: flex-start;
+    }
+    &_fe {
+        align-self: flex-end;
+    }
+    &_s {
+        align-self: stretch;
+    }
+    &_c {
+        align-self: center;
+    }
+    &_b {
+        align-self: baseline;
+    }
+}
+.fj {
+    &_s {
+        justify-content: stretch;
+    }
+    &_fs {
+        justify-content: flex-start;
+    }
+    &_fe {
+        justify-content: flex-end;
+    }
+    &_c {
+        justify-content: center;
+    }
+    &_sb {
+        justify-content: space-between;
+    }
+    &_sbc {
+        justify-content: space-between;
+        &:before,
+        &:after {
+            content: "";
+            display: block;
+        }
+    }
+    &_sa {
+        justify-content: space-around;
+    }
+    // 不兼容 IE11  https://caniuse.com/?search=justify-content%20space-evenly
+    &_se {
+        justify-content: space-evenly;
+    }
+}
+.fw {
+    &_nw {
+        flex-wrap: nowrap;
+    }
+    &_w {
+        flex-wrap: wrap;
+    }
+    &_wr {
+        flex-wrap: wrap-reverse;
+    }
+}
