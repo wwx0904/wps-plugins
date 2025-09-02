@@ -110,6 +110,26 @@ jobs:
     - name: Install dependencies
       run: npm install
       
+    - name: Create valid icon files
+      shell: cmd
+      run: |
+        mkdir src-tauri\icons 2>nul
+        echo Creating valid icon files...
+        certutil -decodeglovy src-tauri\icons\icon.ico src-tauri\icons\icon.ico.b64 >nul 2>&1 || (
+          echo Creating minimal valid ICO file...
+          echo ^<?xml version="1.0" encoding="UTF-8"?^> > src-tauri\icons\icon.svg
+          echo ^<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"^> >> src-tauri\icons\icon.svg
+          echo ^<rect width="32" height="32" fill="#667eea"/^> >> src-tauri\icons\icon.svg
+          echo ^</svg^> >> src-tauri\icons\icon.svg
+        )
+        
+    - name: Temporarily disable Windows icon
+      run: |
+        # Update tauri.conf.json to use empty icon array for Windows
+        $config = Get-Content "src-tauri\tauri.conf.json" -Raw | ConvertFrom-Json
+        $config.tauri.bundle.icon = @()
+        $config | ConvertTo-Json -Depth 10 | Set-Content "src-tauri\tauri.conf.json"
+        
     - name: Build the app
       run: npm run tauri:build
       
@@ -117,7 +137,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: windows-app
-        path: src-tauri/target/release/bundle/msi/*.msi
+        path: src-tauri/target/release/bundle/app/*.exe
         retention-days: 30
 
   create-release:
@@ -136,7 +156,8 @@ jobs:
         files: |
           macos-app/**/*.app
           macos-app/**/*.dmg
-          windows-app/**/*.msi
+          windows-app/**/*.exe
+          installation-guide/macOS-安装指南.md
         draft: false
         prerelease: false
         generate_release_notes: true

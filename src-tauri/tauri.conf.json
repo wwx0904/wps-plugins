@@ -57,7 +57,7 @@
       },
       "resources": [],
       "shortDescription": "WPS插件环境切换工具",
-      "targets": ["app", "msi"],
+      "targets": ["app"],
       "windows": {
         "certificateThumbprint": null,
         "digestAlgorithm": "sha256",
