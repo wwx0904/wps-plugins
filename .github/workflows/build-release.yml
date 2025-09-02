@@ -48,6 +48,40 @@ jobs:
           src-tauri/target/release/bundle/macos/*.app
           src-tauri/target/release/bundle/dmg/*.dmg
         retention-days: 30
+        
+    - name: Create macOS installation guide
+      run: |
+        echo "# macOS 应用安装指南
+        
+        ## 如果应用显示"文件已损坏"
+        
+        ### 方法 1：系统偏好设置
+        1. 打开 **系统偏好设置**
+        2. 点击 **隐私与安全性**
+        3. 滚动到底部，找到应用
+        4. 点击 **仍要打开**
+        
+        ### 方法 2：命令行移除隔离
+        在终端运行：
+        \`\`\`bash
+        xattr -cr "/Applications/AI赢标助手-WPS环境切换工具.app"
+        \`\`\`
+        
+        ### 方法 3：右键打开
+        1. 右键点击应用
+        2. 选择 **打开**
+        3. 点击 **打开** 按钮
+        
+        ## 说明
+        这是 macOS 安全机制的正常行为。为了更好的体验，我们正在准备代码签名版本。
+        " > macOS-安装指南.md
+        
+    - name: Upload installation guide
+      uses: actions/upload-artifact@v4
+      with:
+        name: installation-guide
+        path: macOS-安装指南.md
+        retention-days: 30
 
   build-windows:
     name: Build Windows App

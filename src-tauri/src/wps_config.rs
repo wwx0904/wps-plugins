@@ -437,7 +437,6 @@ pub async fn clear_wps_cache_internal() -> Result<()> {
 
 /// Windows平台清理WPS缓存
 async fn clear_wps_cache_windows() -> Result<()> {
-    use std::process::Command;
     use std::fs;
     use std::path::PathBuf;
     
@@ -462,7 +461,6 @@ async fn clear_wps_cache_windows() -> Result<()> {
 
 /// macOS平台清理WPS缓存
 async fn clear_wps_cache_macos() -> Result<()> {
-    use std::process::Command;
     use std::fs;
     use std::path::PathBuf;
     
@@ -487,7 +485,6 @@ async fn clear_wps_cache_macos() -> Result<()> {
 
 /// Linux平台清理WPS缓存
 async fn clear_wps_cache_linux() -> Result<()> {
-    use std::process::Command;
     use std::fs;
     use std::path::PathBuf;
     
@@ -573,7 +570,7 @@ pub async fn configure_hosts_internal(host_config: &str) -> Result<()> {
 /// Windows平台配置hosts文件
 async fn configure_hosts_windows(host_config: &str) -> Result<()> {
     use std::fs::{OpenOptions, read_to_string};
-    use std::io::{Read, Write};
+    use std::io::Write;
     use std::path::PathBuf;
     
     let hosts_file = PathBuf::from(std::env::var("SystemRoot").unwrap_or_else(|_| "C:\\Windows".to_string()))
@@ -666,8 +663,6 @@ async fn configure_hosts_macos(host_config: &str) -> Result<()> {
 
 /// Linux平台配置hosts文件
 async fn configure_hosts_linux(host_config: &str) -> Result<()> {
-    use std::fs::{OpenOptions, read_to_string};
-    use std::io::Write;
     use std::path::PathBuf;
     use std::process::Command;
     
