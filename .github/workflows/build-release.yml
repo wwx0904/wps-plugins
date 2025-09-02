@@ -110,36 +110,16 @@ jobs:
     - name: Install dependencies
       run: npm install
       
-    - name: Remove problematic icon files
+    - name: Remove icons directory completely
       run: |
-        # Simply remove the icons directory to avoid icon parsing issues
+        # Remove the entire icons directory to prevent any icon-related errors
         Remove-Item -Path "src-tauri\icons" -Recurse -Force -ErrorAction SilentlyContinue
-        New-Item -ItemType Directory -Path "src-tauri\icons" -Force | Out-Null
         
-    - name: Create empty but valid icon file
+    - name: Build without icons
       run: |
-        # Create a minimal 1x1 pixel ICO file
-        $bytes = [byte[]]@(
-            0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x01, 
-            0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x30, 0x00, 
-            0x00, 0x00, 0x16, 0x00, 0x00, 0x00, 0x28, 0x00, 
-            0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 
-            0x00, 0x00, 0x01, 0x00, 0x18, 0x00, 0x00, 0x00, 
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
-            0x00, 0x00
-        )
-        [System.IO.File]::WriteAllBytes("src-tauri\icons\icon.ico", $bytes)
-        
-    - name: Temporarily disable Windows icon
-      run: |
-        # Update tauri.conf.json to use empty icon array for Windows
-        $config = Get-Content "src-tauri\tauri.conf.json" -Raw | ConvertFrom-Json
-        $config.tauri.bundle.icon = @()
-        $config | ConvertTo-Json -Depth 10 | Set-Content "src-tauri\tauri.conf.json"
-        
-    - name: Build the app
-      run: npm run tauri:build
+        # Build with TAURI_SKIP_ICON_CREATION to skip icon processing
+        $env:TAURI_SKIP_ICON_CREATION = "1"
+        npm run tauri:build
       
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
